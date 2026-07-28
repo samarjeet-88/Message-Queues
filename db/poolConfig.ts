@@ -1,8 +1,8 @@
 import { Pool } from "pg";
-import { db } from "../utils/envConfig.js";
+import { envConfig } from "../utils/envConfig.js";
 
 export const pool = new Pool({
-  connectionString: db.dbUrl,
+  connectionString: envConfig.dbUrl,
 
   statement_timeout: 30000,
   query_timeout: 35000,

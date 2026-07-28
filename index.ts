@@ -4,6 +4,7 @@ import { pingDb } from "./db/index.js";
 import { logger } from "./utils/logConfig.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocument } from "./utils/swagger.js";
+import globalRouter from "./router.js";
 
 const app = express();
 
@@ -14,6 +15,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.get("/health", (req, res) => {
     res.json({ status: "OK" });
 });
+
+app.use(globalRouter);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.status(404).json({ message: "Not Found" });
