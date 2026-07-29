@@ -5,6 +5,9 @@ import { logger } from "./utils/logConfig.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocument } from "./utils/swagger.js";
 import globalRouter from "./router.js";
+import SweepOutbox from "./01Redis/sweep.js";
+import queueWorker from "./01Redis/worker.js";
+import RedisClass from "./shared/RedisClass.js";
 
 const app = express();
 
@@ -34,8 +37,21 @@ app.use(errorHandler);
 
 app.listen(3000, () => {
     logger.info("Server is running on port 3000");
-    pingDb().then(() => {
+    pingDb().then(async () => {
         logger.info("Database connected successfully")
+        try {
+            await RedisClass.getInstance().getClient();
+            logger.info("Redis connected successfully")
+            
+            const sweeper = new SweepOutbox();
+            sweeper.startOutboxSweeper();
+            logger.info("Outbox sweeper initialized.");
+        } catch (error) {
+            logger.error(`Error starting outbox sweeper: ${error}`)
+        }
+        const worker = new queueWorker();
+        worker.initWorker();
+        logger.info("Background workers initialized.");
     }).catch((error) => {
         logger.error("Database connection failed", error)
     })
