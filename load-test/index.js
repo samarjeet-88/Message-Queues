@@ -1,5 +1,5 @@
 const URL = 'http://localhost:3000/redis/notification';
-const CONCURRENT_USERS = 100;
+const CONCURRENT_USERS = 1000;
 
 async function sendRequest(id) {
     const start = Date.now();

@@ -4,7 +4,7 @@ import RedisService from "../shared/RedisService.js";
 import { logger } from "../utils/logConfig.js";
 
 
-
+// NOT USING THIS FUNCTION AS WE HAVE THE SWEEP FUNCTION INSTEAD
 
 export async function syncWorker() {
     logger.info("Syncing pending tasks");
