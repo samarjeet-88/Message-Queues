@@ -7,6 +7,8 @@ import { swaggerDocument } from "./utils/swagger.js";
 import globalRouter from "./router.js";
 import SweepOutbox from "./01Redis/sweep.js";
 import queueWorker from "./01Redis/worker.js";
+import StreamSweepOutbox from "./02RedisStream/sweep.js";
+import StreamWorker from "./02RedisStream/worker.js";
 import RedisClass from "./shared/RedisClass.js";
 
 const app = express();
@@ -46,12 +48,20 @@ app.listen(3000, () => {
             const sweeper = new SweepOutbox();
             sweeper.startOutboxSweeper();
             logger.info("Outbox sweeper initialized.");
+
+            const streamSweeper = new StreamSweepOutbox();
+            streamSweeper.startStreamSweeper();
+            logger.info("Stream outbox sweeper initialized.");
         } catch (error) {
             logger.error(`Error starting outbox sweeper: ${error}`)
         }
         const worker = new queueWorker();
         worker.initWorker();
         logger.info("Background workers initialized.");
+
+        const streamWorker = new StreamWorker();
+        streamWorker.initWorker();
+        logger.info("Background stream workers initialized.");
     }).catch((error) => {
         logger.error("Database connection failed", error)
     })
